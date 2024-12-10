@@ -1,0 +1,58 @@
+---
+title: "Week 9 Assignment- Tidyverse"
+author: "Jiaxin Zheng"
+date: "2024-12-09"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r}
+library(knitr)
+library(stringr)
+library(tidyr)
+library(dplyr)
+library(tidyverse)
+library(ggplot2)
+```
+
+Picked the data from kaggle "Word University Rank 2020" updated to github, and read the csv
+```{r}
+
+file <- "https://raw.githubusercontent.com/Jennyjjxxzz/Data-607_Project2/refs/heads/main/wide_data/Word_University_Rank_2020.csv"
+df <- read.csv(file)
+head(df)
+
+```
+
+We can filter the universities
+```{r}
+#filter the universities ranked in the top 100
+df_top100 <- df %>%
+  filter(as.numeric(Rank_Char) <= 100)
+
+head(df_top100)
+```
+
+Use group_by to group the Country and ggpplot for visualization
+```{r}
+country_top100 <- df_top100 %>%
+  group_by(Country) %>%
+  summarize(university_count = n()) %>%
+  arrange(desc(university_count))
+
+print(country_top100)
+```
+
+
+```{r}
+ggplot(country_top100, aes(x = reorder(Country, university_count), y = university_count)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  coord_flip() +
+  labs(title = "Number of Universities in the Top 100 by Country", 
+       x = "Country", 
+       y = "Number of Universities")+
+  theme_minimal()
+```
+
+
